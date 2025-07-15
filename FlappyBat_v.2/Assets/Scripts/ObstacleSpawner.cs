@@ -12,20 +12,18 @@ namespace FlappyBatGame.Spawners
     public class ObstacleSpawner : MonoBehaviour
     {
         public float spawnerInterval = 2f;
-        public float gapSize = 2f;
         public PoolManager poolManager;
-            
-        
-        
+        private Camera mainCamera;   // Кэш камеры
+        public float GapSize { get; set; }
+
+        private void Awake()
+        {
+            mainCamera = Camera.main;
+        }
+
         //Ассинхронный цикл спавна препятствий
         public async UniTaskVoid StartSpawning(CancellationToken token)
         {
-            if (poolManager == null)
-            {
-                Debug.LogError("PoolManager is null!");
-                return;
-            }
-            
             if (Camera.main == null)
             {
                 Debug.LogError("Camera main is null!");
@@ -34,7 +32,7 @@ namespace FlappyBatGame.Spawners
 
             if (poolManager == null)
             {
-                Debug.LogError("Spawner: PoolManager is null!");
+                Debug.LogError("PoolManager is null!");
                 return;
             }
             
@@ -43,24 +41,23 @@ namespace FlappyBatGame.Spawners
                 await UniTask.Delay(TimeSpan.FromSeconds(spawnerInterval), cancellationToken: token);
 
                 GameObject obsObj = poolManager.GetObstacle();
-                Debug.Log($"[ObstacleSpawner] Попытка получить obstacle: {obsObj}");
                 if (obsObj != null)
                 {
                     obsObj.SetActive(true);
                     Debug.Log("Obstacle активирован");
-                    float screenWidth = Camera.main.orthographicSize * Camera.main.aspect;
-                    float spawnX = Camera.main.transform.position.x + screenWidth + 1f;
-                    float gapCenterY = UnityEngine.Random.Range(-2f, 2f);
-                    Vector3 spawnPos = new Vector3(spawnX, 0f, 0f);
+
+                    float spawnX = SpawnerUtils.GetSpawnX(mainCamera);
+                    float gapCenterY = UnityEngine.Random.Range(-2, 2);
+                    
+                    Vector3 spawnPos = new Vector3(spawnX,0f, 0f);
                     
                     ObstacleController oc = obsObj.GetComponent<ObstacleController>();
                     if (oc != null)
                     {
-                        oc.SetupObstacle(spawnPos, gapCenterY, gapSize);
+                        oc.SetupObstacle(spawnPos, gapCenterY, GapSize);
                     }
                 }
             }
         }
     }
 }
-

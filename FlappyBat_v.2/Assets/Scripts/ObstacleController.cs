@@ -8,8 +8,21 @@ namespace FlappyBatGame.Controllers
     public class ObstacleController : MonoBehaviour
     {
         public float obstacleSpeed = 2f;
+        public float minHeightBottomObstacle = 3.85f;
+        public float minHeightTopObstacle = 2f;
         public bool scored = false; //флаг, для начисление счетчика пролетевших препятствий
 
+        private Transform _top, _bottom;
+        private SpriteRenderer _topSR, _bottomSR;
+
+        private void Awake()
+        {
+            //один раз ищем нужные компоненты
+            _top = transform.Find("ObstacleTop");
+            _bottom = transform.Find("ObstacleBottom");
+            if (_top != null) _topSR = _top.GetComponent<SpriteRenderer>();
+            if (_bottom != null) _bottomSR = _bottom.GetComponent<SpriteRenderer>();
+        }
         private void OnEnable()
         {
             scored = false;
@@ -19,31 +32,31 @@ namespace FlappyBatGame.Controllers
         public void SetupObstacle(Vector3 spawnPosition, float gapCenterY, float gapSize)
         {
             transform.position = spawnPosition;
-            Transform top = transform.Find("ObstacleTop");
-            Transform bottom = transform.Find("ObstacleBottom");
 
-            if (top != null && bottom != null && Camera.main != null)
+            if (_topSR != null && _bottomSR != null && Camera.main != null)
             {
                 float screenTop = Camera.main.transform.position.y + Camera.main.orthographicSize;
                 float screenBottom = Camera.main.transform.position.y - Camera.main.orthographicSize;
                 
                 //Верхнее препятствие
-                float desiredTopHeight = screenTop - (gapCenterY + gapSize / 2); //Ожидаемая высота
-                float topCenterY = desiredTopHeight / 2 + gapCenterY + gapSize / 2; // Позиция центра по Y
+                float desiredTopHeight = screenTop - (gapCenterY + (gapSize / 2)); //Ожидаемая высота
+                float topHeight = Math.Max(desiredTopHeight, minHeightTopObstacle);
+                float topCenterY = screenTop - (topHeight / 2f); // Позиция центра по Y
                 
-                SpriteRenderer topSR = top.GetComponent<SpriteRenderer>();
-                // float topRightBound = topSR.bounds.max.x;
-                topSR.size = new Vector2(topSR.size.x, desiredTopHeight); //тянем
-                topSR.transform.position = new Vector3(spawnPosition.x, topCenterY, spawnPosition.z);
+                _topSR.size = new Vector2(_topSR.size.x, topHeight); //тянем
+                _topSR.transform.position = new Vector3(spawnPosition.x, topCenterY, spawnPosition.z);
                 
                 //Нижнее препятствие
-                float desiredBottomHeight = (gapCenterY - gapSize / 2) - screenBottom; //Ожидаемая высота
-                float bottomCenterY = gapCenterY - gapSize / 2 - desiredBottomHeight / 2; // Позиция центра по Y
+                float desiredBottomHeight = (gapCenterY - (gapSize / 2)) - screenBottom; //Ожидаемая высота
+                float bottomHeight = Math.Max(desiredBottomHeight, minHeightBottomObstacle);
+                float bottomCenterY = screenBottom + (bottomHeight / 2f); // Позиция центра по Y
                 
-                SpriteRenderer bottomSR = bottom.GetComponent<SpriteRenderer>();
-                // float bottomRightBound = bottomSR.bounds.max.x;
-                bottomSR.size = new Vector2(bottomSR.size.x, desiredBottomHeight); //тянем
-                bottomSR.transform.position = new Vector3(spawnPosition.x, bottomCenterY, spawnPosition.z);
+                _bottomSR.size = new Vector2(_bottomSR.size.x, bottomHeight); //тянем
+                _bottomSR.transform.position = new Vector3(spawnPosition.x, bottomCenterY, spawnPosition.z);
+            }
+            else
+            {
+                Debug.LogWarning("ObstacleController: One or more required components not found!");
             }
         }
         
@@ -55,20 +68,15 @@ namespace FlappyBatGame.Controllers
         
         public float GetRightPointMax()
         {
-            Transform top = transform.Find("ObstacleTop");
-            Transform bottom = transform.Find("ObstacleBottom");
-            
-            if (top != null && bottom != null)
+            if (_topSR != null && _bottomSR != null)
             {
-                SpriteRenderer topSR = top.GetComponent<SpriteRenderer>();
-                float topRightPoint = topSR.bounds.max.x;
-                
-                SpriteRenderer bottomSR = bottom.GetComponent<SpriteRenderer>();
-                float bottomRightPoint = bottomSR.bounds.max.x;
+                float topRightPoint = _topSR.bounds.max.x;
+                float bottomRightPoint = _bottomSR.bounds.max.x;
                 
                 return Mathf.Max(topRightPoint, bottomRightPoint);
             }
-
+            
+            Debug.LogWarning("ObstacleController: SpriteRenderers not assigned!");
             return float.NegativeInfinity; // Если не найдено, возвращаем минимальное значение
         }
     }

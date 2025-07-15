@@ -44,5 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 153acf1b6cf9c1e47a0cedb50c621a66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnInterval: 2
+  spawnInterval: 4
+  rewardSpawnOffsetX: 4
   poolManager: {fileID: 8309053227653898307, guid: 9cb13680cd3daab4ab2fab8bb47cb685, type: 3}

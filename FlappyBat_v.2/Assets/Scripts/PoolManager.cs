@@ -14,8 +14,11 @@ namespace FlappyBatGame.Managers
         public GameObject rewardPrefab;
         public int rewardPoolSize = 5;
         
-        public List<GameObject> obstaclePool = new List<GameObject>();
-        public List<GameObject> rewardPool = new List<GameObject>();
+        private List<GameObject> _obstaclePool = new List<GameObject>();
+        private List<GameObject> _rewardPool = new List<GameObject>();
+
+        public IReadOnlyList<GameObject> obstaclePool => _obstaclePool;
+        public IReadOnlyList<GameObject> rewardPool => _rewardPool;
         
         private void Awake()
         {
@@ -31,7 +34,7 @@ namespace FlappyBatGame.Managers
             {
                 GameObject obs = Instantiate(obstaclePrefab, transform);
                 obs.SetActive(false);
-                obstaclePool.Add(obs);
+                _obstaclePool.Add(obs);
             }
             
             //создание пула наград
@@ -39,14 +42,14 @@ namespace FlappyBatGame.Managers
             {
                 GameObject rew = Instantiate(rewardPrefab, transform);
                 rew.SetActive(false);
-                rewardPool.Add(rew);
+                _rewardPool.Add(rew);
             }
         }
         
         //возвращает неактивное препятствие
         public GameObject GetObstacle()
         {
-            foreach (GameObject obs in obstaclePool)
+            foreach (GameObject obs in _obstaclePool)
             {
                 if (!obs.activeInHierarchy) return obs;
             }
@@ -56,7 +59,7 @@ namespace FlappyBatGame.Managers
         //возвращает неактивную награду
         public GameObject GetReward()
         {
-            foreach (GameObject rew in rewardPool)
+            foreach (GameObject rew in _rewardPool)
             {
                 if (!rew.activeInHierarchy) return rew;
             }
@@ -67,12 +70,12 @@ namespace FlappyBatGame.Managers
         public void ResetPools()
         {
             Debug.Log("ResetPools called");
-            foreach (GameObject obs in obstaclePool)
+            foreach (GameObject obs in _obstaclePool)
             {
                 obs.SetActive(false);
             }
 
-            foreach (GameObject rew in rewardPool)
+            foreach (GameObject rew in _rewardPool)
             {
                 rew.SetActive(false);
             }

@@ -46,7 +46,7 @@ namespace FlappyBatGame.Managers
         {
             if (logicManager != null)
             {
-                // logicManager.ResetGame();
+                logicManager.ResetGame();
                 logicManager.StartGame();
             }
                 

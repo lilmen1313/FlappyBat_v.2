@@ -74,12 +74,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: b0684d6c65f8ad147872b97d25b55cc3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d747c265673163943875fa04e51de8d6, type: 3}
   m_Color: {r: 0.7686275, g: 0.7686275, b: 0.7686275, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 3.01, y: 1.76}
+  m_Size: {x: 3.4, y: 2.3}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -98,4 +98,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gravity: 9.8
-  flapStrength: 5
+  flapStrength: 3
+  batFrames:
+  - {fileID: 21300000, guid: d747c265673163943875fa04e51de8d6, type: 3}
+  - {fileID: 21300000, guid: f3e2d936f2946f14f91c0146940610de, type: 3}
+  - {fileID: 21300000, guid: ee9eff006cf5ce740a39b6afa4ba82b9, type: 3}
+  animationFPS: 10
